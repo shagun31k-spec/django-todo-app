@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Todo App</title>
+
+    <style>
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #ffecd2, #fcb69f);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 450px;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+h1 {
+    text-align: center;
+    color: #7c3aed;
+    margin-bottom: 25px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #6b7280;
+    margin-top: -15px;
+    margin-bottom: 25px;
+}
+
+<p class="task-count">
+    {{ remaining_tasks }} task{{ remaining_tasks|pluralize }} remaining
+</p>
+
+form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+input {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #c4b5fd;
+    border-radius: 10px;
+    font-size: 16px;
+    outline: none;
+}
+
+input:focus {
+    border-color: #7c3aed;
+}
+
+.add-btn {
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.add-btn:hover {
+    transform: scale(1.05);
+}
+.task-count {
+    text-align: center;
+    color: #7c3aed;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.task {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #fdf2f8, #ede9fe);
+    border-left: 5px solid #a855f7;
+    border-radius: 12px;
+
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.task:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+}
+
+.task-text {
+    flex: 1;
+    color: #374151;
+}
+
+.completed {
+    text-decoration: line-through;
+    color: #9ca3af;
+}
+
+.actions a {
+    text-decoration: none;
+    margin-left: 8px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.complete {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+.edit {
+    background-color: #dbeafe;
+    color: #2563eb;
+}
+.delete {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.empty {
+    text-align: center;
+    color: #6b7280;
+    background: #f9fafb;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>My Todo App</h1>
+    <p class="subtitle">Stay organized and get things done ✨</p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <input
+            type="text"
+            name="title"
+            placeholder="Enter a task"
+        >
+
+        <button class="add-btn" type="submit">Add</button>
+    </form>
+
+    {% for task in tasks %}
+
+    <div class="task">
+
+        <div class="task-text">
+            {% if task.completed %}
+                <span class="completed">{{ task.title }}</span>
+            {% else %}
+                {{ task.title }}
+            {% endif %}
+        </div>
+
+        <div class="actions">
+
+            {% if not task.completed %}
+                <a class="complete"
+                   href="{% url 'complete_task' task.id %}">
+                    Complete
+                </a>
+            {% endif %}
+
+            <a class="edit"
+               href="{% url 'edit_task' task.id %}">
+                Edit
+            </a>
+
+            <a class="delete"
+               href="{% url 'delete_task' task.id %}">
+                Delete
+            </a>
+
+        </div>
+
+    </div>
+
+{% empty %}
+
+    <p class="empty">No tasks yet.</p>
+
+{% endfor %}
+
+</div>
+
+</body>
+</html>
